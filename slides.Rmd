@@ -1,0 +1,295 @@
+---
+title: "On Linguistic Perceptions and Attitudes Toward Peninsular Spanish:
+A Perspective from Heritage and Monolingual Speakers"
+subtitle: "Research Project"
+author: "Meritxell Feliu Ribas"
+institute: "Rutgers University"
+date: "2023/05/01 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: [default, rutgers, rutgers-fonts]
+---
+
+# Overview of the study
++ Sociolinguistics **&rarr;** Analyze language attitudes towards Peninsular Spanish in terms of warmth and competence.
+
++ Research Questions:
+  1. What are the attitudes of Peninsular Spanish Heritage Speakers (PSHS) from the U.S. and Peninsular Spanish Monolinguals (PSML) toward their own Spanish variety in terms of warmth and competence?
+  2. How do the results from PSHS compare to the attitudes of PSML?
+  3. Do Spanish proficiency and/or level of education impact the perceptions of the PSHS and the PSML towards their own variety?
+
++ Hypotheses:
+  1. PSHS will exhibit solidarity towards their variety giving it higher scores on warmth traits compared to competence traits. PSML will rate high their dialect on both warmth and competence traits.
+  2. The results will be similar on warmth traits, but not on competence traits.
+  3. Spanish proficiency and level of education may have an effect on PSHS' language attitudes.
+  
+---
+<br>
+
++ Participants (n = 40): PSHS and PSML
+
++ Methods:
+  + Demographic questionnaire
+  
+  + Spanish Proficiency exam (DELE)
+  
+  + Verbal-guise test
+  
+      + Audio recording - Speaker of Peninsular Spanish
+      
+      + Rate it using a 4-point Likert-scale (1 = not at all, 4 = very)
+      
+          + Warmth traits: *friendly*, *likeable*, *helpful*
+          
+          + Competence traits: *intelligent*, *successful*, *ambitious*
+    
++ Important note:
+  + This is a (very) simplified version of a research proposal I wrote last semester.
+  
+  + It was too complex to analyze (I have learned a lot, but I do not know that much!).
+  
+---
+```{r, load-libraries, echo=FALSE, include=FALSE, warning=FALSE}
+library("tidyverse")
+library("ds4ling")
+library(here)
+library("kableExtra")
+options(digits=3)
+```
+
+# Preparation of the data
++ Joseph created the data based on what I asked:
+
+```{r, data-upload, echo=FALSE, include=FALSE, warning=FALSE}
+attitude_raw <- read.csv(here("data_raw","attitude_data.csv"))
+```
+
+```{r, data-visualize, echo=FALSE, include=TRUE, warning=FALSE, full_width=FALSE}
+head(attitude_raw) %>%
+  knitr::kable(
+    caption = "Raw Data",
+    col.names = c("ID", "Age", "Ed.", "Prof.", "Fr.", "Lik.", "Help.", "Int.", "Succ.", "Amb.")) %>%
+  kable_styling(font_size = 15)
+```
+
++ *ID* had three variables, so I separeted them into: *id*, *group*, and *gender*.
+
++ If you recall, the study wants to analyze the perception of Peninsular Spanish in terms of warmth and competence.
+
++ I had 3 values for warmth (fr., lik., help.) and 3 values for competence (int., succ., amb.).
+
++ I decided to calculate the mean of warmth and the mean of competence and create a new variable.
+
+  + If you have a better suggestion, let me know! This is the only way I could think of based on what I know.
+
+---
+<br>
+
++ After tidying and creating the new variable, my data looked like this:
+
+```{r, data-final-upload, echo=FALSE, include=FALSE, warning=FALSE}
+attitude_final <- read.csv(here("data_tidy","attitude_final.csv"))
+```
+
+```{r, data-final-visualize, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final[c(1:6, 21:27),] %>%
+  select(c(1:6, 13, 14)) %>%
+  view() %>%
+  knitr::kable(
+    caption = "Final Data",
+    col.names = c("ID", "Group", "Gend.", "Age", "Edu.", "Prof.", "Warmth", "Competence")) %>%
+  kable_styling(font_size = 16)
+```
+
+---
+
+# Descriptive Statistics
+
++ I created descriptive statistics for my two dependent variables (warmth and competence) by group:
+
+
+```{r, descriptive-statistics-warmth, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final %>%
+  group_by(group) %>% 
+  summarize(
+    mean_warmth_total = mean(warmth_total),
+    median_warmth_total = median(warmth_total),
+    sd_warmth_total = sd(warmth_total),
+    min_warmth_total = min(warmth_total),
+    max_warmth_total = max(warmth_total),
+    ) %>%
+  knitr::kable(
+    caption = "Descriptive Stats for Warmth by Group",
+    col.names = c("Group", "Mean", "Median", "Sd", "Min", "Max")
+  )
+```
+<br>
+<br>
+```{r, descriptive-statistics-competence, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final %>%
+  group_by(group) %>% 
+  summarize(
+    mean_competence_total = mean(competence_total),
+    median_competence_total = median(competence_total),
+    sd_competence_total = sd(competence_total),
+    min_competence_total = min(competence_total),
+    max_competence_total = max(competence_total),
+    ) %>%
+  knitr::kable(
+    caption = "Descriptive Stats for Competence by Group",
+    col.names = c("Group", "Mean", "Median", "Sd", "Min", "Max")
+  )
+```
+
+<br>
++ No difference between groups on the average rating of warmth.
+
++ Difference between groups on the average rating of competence.
+
+---
+
+<br>
+
+```{r, plots-wc-group, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = warmth_total) + 
+  geom_boxplot() +
+  labs(x = "Group", y = "Warmth",
+       title = "Warmth by Group")
+
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = competence_total) + 
+  geom_boxplot() +
+  labs(x = "Group", y = "Competence",
+       title = "Competence by Group")
+```
+
+---
+
+<br>
+
++ I also wanted to know more about proficiency and education of the groups:
+<br>
+
+```{r, descriptive-statistics-prof, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final %>%
+  group_by(group) %>% 
+  summarize(
+    mean_proficiency = mean(proficiency),
+    median_proficiency = median(proficiency),
+    sd_proficiency = sd(proficiency),
+    min_proficiency = min(proficiency),
+    max_proficiency = max(proficiency),
+    ) %>%
+  knitr::kable(
+    caption = "Descriptive Stats for Proficiency by Group",
+    col.names = c("Group", "Mean", "Median", "Sd", "Min", "Max")
+  )
+```
+
++ Both groups differ in their mean proficiency scores in the DELE. Monolinguals have higher scores on average.
+
+<br>
+```{r, desc-ed, echo=FALSE, include=FALSE, warning=FALSE}
+table(attitude_final$group, attitude_final$edu)
+```
+<div align="center">
+Education by Group 
+</div>
+
+Group       | High School | College | Higher 
+----------- | ----------- | ------- | ------  
+Heritage    |     5       |   12    |   3    
+Monolingual |     5       |   12    |   3    
+Total       |     10      |   24    |   6    
+
++ There is an equal distribution of education among the groups. 
+
+---
+
+```{r, plots-group-prof, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = proficiency, y = warmth_total, color = group) + 
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Proficiency", y = "Warmth",
+       title = "Warmth by Proficiency and Group")
+
+attitude_final %>% 
+ ggplot() + 
+  aes(x = proficiency, y = competence_total, color = group) + 
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Proficiency", y = "Competence",
+       title = "Competence by Proficiency and Group")
+```
+
++ Warmth: The data show similar trends for both groups. There may be no correlation between proficiency and perception. 
+
++ Competence: The data show different trends for the groups. It seems that, as proficiency increases, ML give higher scores to competence compared to HS. It could be that proficiency has no effects on competence. 
+
++ Further analysis must be done in order to come to any conclusions about the data.
+
+---
+
+```{r, plots-group-ed, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = warmth_total) + 
+  facet_grid(. ~ edu) +
+  geom_boxplot() +
+  labs(x = "Education", y = "Warmth",
+       title = "Warmth by Education and Group")
+
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = competence_total) + 
+  facet_grid(. ~ edu) +
+  geom_boxplot() +
+  labs(x = "Education", y = "Competence",
+       title = "Competence by Education and Group")
+```
+
++ Warmth: The data show similar trends for both groups. There are some differences in the variance between the different educational levels.
+
++ Competence: The data show different trends for the groups. It looks like ML rate Peninsular Spanish higher on competence compared to HS. Here there are some differences in the variance between the different educational levels as well.
+
++ Further analysis must be done in order to come to any conclusions about the data.
+
+---
+
+# Summary of my observations
++ It seems that there are no differences between groups in regards to the perception of Peninsular Spanish in terms of warmth, but some are observed in terms of competence. The model will show if this difference is significant.
+
++ It may be that proficiency has no effects on the perception of Peninsular Spanish.
+
++ It could be that education affects the attitudes towards Peninsular Spanish. Additionally, there are differences between the different education levels. 
+
++ The model will tell us if group, Spanish proficiency, and education have an impact on the perception of Peninsular Spanish in terms of warmth and competence. 
+
+---
+# Analysis
+
+### Warmth
+```{r, models-warmth}
+model_w0 <- lm(warmth_total ~ 1, data = attitude_final)
+model_w1 <- lm(warmth_total ~ group, data = attitude_final)
+model_w2 <- lm(warmth_total ~ group + proficiency, data = attitude_final)
+model_w3 <- lm(warmth_total ~ group + proficiency + edu, data = attitude_final)
+```
+
+### Competence
+```{r, models-competence}
+model_c0 <- lm(competence_total ~ 1, data = attitude_final)
+model_c1 <- lm(competence_total ~ group, data = attitude_final)
+model_c2 <- lm(competence_total ~ group + proficiency, data = attitude_final)
+model_c3 <- lm(competence_total ~ group + proficiency + edu, data = attitude_final)
+```
+
++ Next steps: 
+  + Test main effects using nested model comparisons
+  + Choose best model
+  + Write results
