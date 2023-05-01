@@ -43,7 +43,6 @@ r_refs("r-references.bib")
 library("tidyverse")
 library("ds4ling")
 library(here)
-library(gvlma)
 ```
 
 ```{r analysis-preferences}
@@ -403,6 +402,10 @@ anova(model_c0, model_c1, model_c2, model_c3)
 summary(model_c1)
 diagnosis(model_c1)
 ```
+
+
+
+
 
 
 

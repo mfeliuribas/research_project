@@ -8,6 +8,8 @@ date: "2023/05/01 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, rutgers, rutgers-fonts]
+    nature: 
+      ratio: "16:9"
 ---
 
 # Overview of the study
@@ -150,11 +152,12 @@ attitude_final %>%
 
 <br>
 
-```{r, plots-wc-group, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+```{r, plots-wc-group, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.retina=2}
 attitude_final %>% 
  ggplot() + 
   aes(x = group, y = warmth_total) + 
-  geom_boxplot() +
+  geom_boxplot() + 
+  coord_cartesian(ylim = c(1, 4)) +
   labs(x = "Group", y = "Warmth",
        title = "Warmth by Group")
 
@@ -162,6 +165,7 @@ attitude_final %>%
  ggplot() + 
   aes(x = group, y = competence_total) + 
   geom_boxplot() +
+  coord_cartesian(ylim = c(1, 4)) +
   labs(x = "Group", y = "Competence",
        title = "Competence by Group")
 ```
@@ -209,22 +213,25 @@ Total       |     10      |   24    |   6
 
 ---
 
-```{r, plots-group-prof, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+```{r, plots-group-prof, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.height=5}
 attitude_final %>% 
  ggplot() + 
   aes(x = proficiency, y = warmth_total, color = group) + 
-  geom_point() +
-  geom_smooth() +
+  geom_point(show.legend = F) +
+  geom_smooth(method = lm, show.legend = F) +
+  coord_cartesian(ylim = c(1, 4)) +
   labs(x = "Proficiency", y = "Warmth",
-       title = "Warmth by Proficiency and Group")
+       title = "Warmth by Proficiency and Group") 
 
 attitude_final %>% 
  ggplot() + 
   aes(x = proficiency, y = competence_total, color = group) + 
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = lm) +
+  coord_cartesian(ylim = c(1, 4)) +
   labs(x = "Proficiency", y = "Competence",
-       title = "Competence by Proficiency and Group")
+       title = "Competence by Proficiency and Group") + 
+  theme(legend.position = c(0.8, 0.15))
 ```
 
 + Warmth: The data show similar trends for both groups. There may be no correlation between proficiency and perception. 
@@ -235,7 +242,7 @@ attitude_final %>%
 
 ---
 
-```{r, plots-group-ed, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+```{r, plots-group-ed, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%",fig.height=5}
 attitude_final %>% 
  ggplot() + 
   aes(x = group, y = warmth_total) + 

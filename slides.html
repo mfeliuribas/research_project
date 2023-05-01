@@ -28,7 +28,7 @@ class: center, middle, inverse, title-slide
 ### Rutgers University
 ]
 .date[
-### 2023/05/01 (updated: 2023-04-30)
+### 2023/05/01 (updated: 2023-05-01)
 ]
 
 ---
@@ -548,7 +548,9 @@ model_c3 &lt;- lm(competence_total ~ group + proficiency + edu, data = attitude_
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script>var slideshow = remark.create();
+<script>var slideshow = remark.create({
+"ratio": "16:9"
+});
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
