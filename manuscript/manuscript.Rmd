@@ -1,0 +1,186 @@
+---
+title             : "On Linguistic Perceptions and Attitudes Toward Peninsular Spanish: A Perspective from Heritage and Monolingual Speakers"
+shorttitle        : "Perceptions and Attitudes Toward Peninsular Spanish"
+
+author: 
+  - name          : "Meritxell Feliu Ribas"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "15 Seminary Place, New Brunswick, NJ 08904"
+    email         : "mfeliuribas@spanport.rutgers.edu"
+
+affiliation:
+  - id            : "1"
+    institution   : "Rutgers University"
+
+bibliography      : ["r-references.bib"]
+
+figsintext        : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : no
+
+class             : "man"
+output            : papaja::apa6_word
+
+---
+
+# Methods
+
+## Participants
+The study consisted of a total of 40 participants. They were native speakers of Peninsular Spanish and were divided into two groups according to their profile: 20 Heritage Speakers (HS) and 20 Monolinguals (ML). The participants were recruited using a social networking approach [@woods_riveramills_2012] and were compensated for their time. In order to assess whether participants were eligible to take part in the study, a screening process, which involved a Demographic Questionnaire, was carried out. 
+
+The HS, following the definition of @valdes_2001, were born and raised in the U.S. and had exposure to Castilian Spanish in the household from their mother, father, or both. They lived in the New York-New Jersey-Pennsylvania metropolitan area, a region with higher rates of population with origins from Spain [@prc_2019]. The ML were born and raised in Spain, in any area where Peninsular Spanish is spoken and were monolingual speakers of Castilian Spanish. 
+
+All participants were over 18 (mean = 25.9, *sd* = 4.73) and most of which had a bachelor's degree (n = 24), some high school (n = 10), and a few higher degrees (n = 6). Although the number of people in each education group is different, there is an equal distribution of education among HS and ML. There is an equal representation of both genders in each group as well. As for Spanish proficiency, both groups differ in their mean proficiency scores in the DELE (HS = 21.6, ML = 31.6). ML have higher scores on average.
+
+
+## Materials
+   *Demographic Questionnaire* (adapted from @montrul_2012, and @torres_2012). It gathered data about personal information (age, sex, education level,race/ethnicity, etc.), family history (family’s area of origin, parents’ language knowledge, parents’ level of schooling, etc.), language background (age of acquisition, language proficiency, language use, etc.), and other (contact with Spain and Spaniards, contact with other Hispanic communities, etc.). It was administered in Spanish using Qualtrics survey software. 
+
+   *Spanish Proficiency Test* (adapted from @jegerski_2018). Spanish proficiency was assessed using a reduced version of the highest level of the DELE exam. The highest possible score was 50. The respondents did not had to get a specific minimum score to be included in this study. 
+
+   *Matched Guise Test*. Linguistic perceptions and attitudes were elicited using this task. It consisted of an aural stimulus: a speaker of Peninsular Spanish reading a short narration about an outing at the farmhouse (length = 101 words, time: 37 seconds). The respondents had to listen to it and rate the speaker on three warmth (*friendly*, *likeable*, *helpful*) and three competence (*intelligent*, *successful*, *ambitious*) traits using a 4-point Likert scale (1 = not at all, 4 = very). 
+
+
+## Procedure
+All participants signed an informed concern to participate in the study and completed a total of three tasks. They filled out, first, the Demographic Questionnaire and then did the Spanish Proficiency Test. Lastly, the respondents completed the matched guise test, which was introduced using the following prompt adapted from Carter and Lynch (2014):
+
+"Recent scientific studies have shown that people can be amazingly good at guessing information about a stranger, even by something as simple as seeing a photograph of the stranger’s bedroom or seeing a sample of their handwriting. One study recently published in the journal Psychological Science found that people were about 65% accurate in judging a stranger’s personality or occupation from a list of four options, just after hearing the person speak or read for 30 s." (as cited in @callesano_carter_2019, p. 90).
+
+The participants completed a soundcheck to verify that the device audio was working properly. The recording of the Peninsular Spanish speaker began playing automatically – participants were not able to pause or replay it or continue to the next page until the audio has ended. After listening to the stimulus, listeners had to rate the speaker on three positive warmth and competence traits using a 4-point Likert scale.
+
+
+## Statistical analysis
+The data were analyzed in R using a linear regression model to examine the relationship between language attitudes, group, proficiency, and level of education. Language attitudes were assessed with a mean value for warmth and a mean value for competence calculated for each participant using their ratings for each trait on the matched guise test. The model included warmth and competence as dependent variables, and group, proficiency and education as predictors. Significance of main effects was assessed using hierarchical partitioning through nested model comparisons. Experiment-wise alpha was set at 0.05.
+
+```{r, load-libraries, echo=FALSE, include=FALSE, warning=FALSE}
+library("tidyverse")
+library("ds4ling")
+library(here)
+options(digits=3)
+```
+
+```{r, data-upload, echo=FALSE, include=FALSE, warning=FALSE}
+attitude_final <- read.csv(here("data_tidy", "attitude_final.csv"))
+```
+
+# Results
+## Warmth
+To explore the attitudes of Peninsular Spanish HS and ML towards their own variety in terms of warmth, we calculated the average rating of this social aspect for each participant using the ratings on each warmth trait. *Table 1* provides descriptive statistics of average rating of warmth by group. The average rating of warmth with respect to Spanish proficiency and level of education are presented in *Figure 1* and *Figure 2*, respectively.
+
+```{r, desc-stats-warmth, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final %>%
+  group_by(group) %>% 
+  summarize(
+    mean_warmth_total = mean(warmth_total),
+    median_warmth_total = median(warmth_total),
+    sd_warmth_total = sd(warmth_total),
+    min_warmth_total = min(warmth_total),
+    max_warmth_total = max(warmth_total),
+    ) %>%
+  knitr::kable(
+    caption = "Descriptive Stats of Warmth by Group",
+    col.names = c("Group", "Mean", "Median", "Sd", "Min", "Max")
+    )
+```
+
+<br>
+
+```{r, plot1-warmth, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.height=2.3, fig.cap = "Warmth by Proficiency and Group."}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = proficiency, y = warmth_total, color = group) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  coord_cartesian(ylim = c(1, 4)) +
+  labs(x = "Proficiency", y = "Warmth") +
+  theme_grey(base_family = "Times", base_size = 9) +
+  theme(legend.position = c(0.85, 0.35))
+```
+
+
+```{r, plot2-warmth, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.height=2.5, fig.cap = "Warmth by Education and Group."}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = warmth_total) + 
+  facet_grid(. ~ edu) +
+  geom_boxplot() +
+  coord_cartesian(ylim = c(1, 4)) +
+  labs(x = "Education", y = "Warmth") +
+  theme_grey(base_family = "Times", base_size = 9)
+```
+
+
+
+The overall pattern shows similar trends for both groups. There is no difference between HS and ML on the average rating of warmth (mean = 3.23, *sd* = 0.447). There are some differences in the variance between the different educational levels. Further analysis using nested model comparisons reveals no main effects of group, proficiency and education on the rating of warmth. However, an effect of proficiency was found in the heritage group, wherein a one-unit change in the proficiency score leads to an increase of 0.03 in average warmth rating overall (SE = 0.01290, t = 2.381, p < 0.05). These results suggest a weak positive relationship between the rating of warmth and proficiency in Spanish only in HS. In our model, only 8% of the variance found in the language attitudes can be explained by group and proficiency (adjusted R-squared = 0.08, p = 0.07), which may indicate that there is no relationship between warmth, group, proficiency and education. 
+
+
+
+## Competence
+Similar to the analysis conducted on warmth, we calculated the average rating of competence for each participant using the ratings on each competence trait. *Table 2* provides descriptive statistics of average rating of competence by group. The average rating of competence with respect to Spanish proficiency and level of education are presented in *Figure 3* and *Figure 4*, respectively.
+
+```{r, descriptive-stats-competence, echo=FALSE, include=TRUE, warning=FALSE}
+attitude_final %>%
+  group_by(group) %>% 
+  summarize(
+    mean_competence_total = mean(competence_total),
+    median_competence_total = median(competence_total),
+    sd_competence_total = sd(competence_total),
+    min_competence_total = min(competence_total),
+    max_competence_total = max(competence_total),
+    ) %>%
+  knitr::kable(
+    caption = "Descriptive Stats of Competence by Group",
+    col.names = c("Group", "Mean", "Median", "Sd", "Min", "Max")
+  )
+```
+
+<br>
+
+```{r, plot1-competence, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.height=2.3, fig.cap = "Competence by Proficiency and Group."}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = proficiency, y = competence_total, color = group) + 
+  geom_point() +
+  geom_smooth(method = lm) +
+  coord_cartesian(ylim = c(1, 4)) +
+  labs(x = "Proficiency", y = "Competence") +
+  theme_grey(base_family = "Times", base_size = 9) +
+  theme(legend.position = c(0.85, 0.25))
+```
+
+<br>
+
+```{r, plot2-competence, echo=FALSE, include=TRUE, warning=FALSE, message=FALSE, fig.height=2.5, fig.cap = "Competence by Education and Group."}
+attitude_final %>% 
+ ggplot() + 
+  aes(x = group, y = competence_total) + 
+  facet_grid(. ~ edu) +
+  geom_boxplot() +
+  coord_cartesian(ylim = c(1, 4)) +
+  labs(x = "Education", y = "Competence") +
+  theme_grey(base_family = "Times", base_size = 9)
+```
+
+
+
+The overall pattern shows different trends for both groups. In general, the average rating of competence of the ML is higher (mean = 3.23, *sd* = 0.563) than the that of the HS (mean = 1.67, *sd* = 0.557). There are some differences in the variance between the different educational levels. Further analysis using nested model comparisons reveals only a main effect of group on the rating of competence. In our model, 61% of the variance found in the language attitudes can be explained by group (adjusted R-squared = 0.61, p < 0.001). 
+
+
+
+
+# Discussion
+The results reported here indicate that respondents make predictive judgments about a speaker's personality when hearing Spanish. The participants' perceptions and attitudes towards Peninsular Spanish were elicited through a matched guise test, where respondents had to rate a speaker of this variety in terms of warmth (*friendly*, *likeable*, *helpful*) and competence (*intelligent*, *successful*, *ambitious*) traits. 
+
+For warmth, both heritage and monolingual groups give Castilian Spanish the same average rating, showing a similar attitude towards their own variety. As for competence, ML rate their dialect significantly higher on average compared to HS. This difference, however, can only be explained by group (HS vs ML) and cannot be account for Spanish proficiency and/or level of education. 
+
+These results verify our hypotheses that HS would exhibit solidarity towards their own variety giving it higher scores on warmth traits compared to competence traits, and that ML would consider themselves the societal prototype group rating their dialect higher on both warmth and competence traits. These findings mirror those reported in several studies on language attitudes and perception of the Spanish language [@ciller_fernandezflorez_2016; @callesano_carter_2019; @cestero_paredes_2018].
+
+
+
+
+\newpage
+
+# References
